@@ -1,5 +1,5 @@
 <script setup>
-import {Link, router} from "@inertiajs/vue3";
+import {Link, router, usePage} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import BreadCrumbs from "@/Components/BreadCrumbs.vue";
 import {Head} from "@inertiajs/vue3";
@@ -7,6 +7,13 @@ import {Head} from "@inertiajs/vue3";
 const props = defineProps({
     theme: {type: Object}
 })
+
+const breadCrumbLinks = [
+    {
+        text: usePage().props.theme.title,
+        href: '/'
+    },
+]
 
 </script>
 
@@ -17,12 +24,7 @@ const props = defineProps({
 
         <template #header>
             <BreadCrumbs
-                v-bind:links="[
-                    {
-                        text: $page.props.theme.title,
-                        href: '/'
-                    }
-                ]"
+                v-bind:links="breadCrumbLinks"
             ></BreadCrumbs>
 
         </template>
