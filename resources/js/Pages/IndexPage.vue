@@ -1,6 +1,6 @@
 <script setup>
 import GuestLayout from "@/Layouts/GuestLayout.vue";
-import {Link, router, useForm} from "@inertiajs/vue3";
+import {Link, router, useForm, usePage} from "@inertiajs/vue3";
 import {Head} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
@@ -57,14 +57,14 @@ const form = useForm({
             <div class="py-12">
                 <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                        <div class="p-6 text-gray-900 border-b-4">
+                        <div class="p-6 text-gray-900 border-b-4" v-if="$page.props.auth.user !== null && $page.props.auth.user.role_id === 'admin'">
                             <PrimaryButton @click="confirmCreateTheme">
                                 Создать тему
                             </PrimaryButton>
                         </div>
                         <template v-if="themes" v-for="theme in themes">
                             <div class="p-6 text-gray-900 border-b-2">
-                                {{ theme.title }}
+                                <Link class="underline" :href="route('theme.show', {theme: theme.id})">{{ theme.title }}</Link>
                             </div>
                         </template>
 

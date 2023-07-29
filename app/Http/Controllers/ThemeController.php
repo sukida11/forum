@@ -19,10 +19,15 @@ class ThemeController extends Controller
         ]);
     }
 
-    public function store(StoreRequest $request)
+    public function store(StoreRequest $request): \Illuminate\Http\RedirectResponse
     {
         Theme::create($request->validated());
         return back();
+    }
+
+    public function show(Theme $theme)
+    {
+        return Inertia::render('SubThemePage', ['theme' => $theme]);
     }
 
 }

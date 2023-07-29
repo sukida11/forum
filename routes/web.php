@@ -27,7 +27,8 @@ Route::get('/', function () {
     ]);
 })->name('main.index');
 
-Route::post('/themes', [ThemeController::class, 'store'])->name('theme.store');
+Route::post('/themes', [ThemeController::class, 'store'])->middleware(['auth', 'verified', 'admin'])->name('theme.store');
+Route::get('/themes/{theme}', [ThemeController::class, 'show'])->name('theme.show');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

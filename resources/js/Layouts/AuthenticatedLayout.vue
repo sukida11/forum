@@ -151,10 +151,10 @@ const showingNavigationDropdown = ref(false);
                     </div>
 
                     <div class="pt-2 pb-3 space-y-1" v-else>
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <ResponsiveNavLink :href="route('login')" :active="route().current('login')">
                             Войти
                         </ResponsiveNavLink>
-                        <ResponsiveNavLink :href="route('dashboard')" :active="route().current('dashboard')">
+                        <ResponsiveNavLink :href="route('register')" :active="route().current('register')">
                             Зарегистрироваться
                         </ResponsiveNavLink>
                     </div>
