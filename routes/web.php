@@ -1,10 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ThemeController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
-
+use App\Models\Theme;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -22,8 +23,11 @@ Route::get('/', function () {
         'canLogin' => Route::has('login'),
         'canRegister' => Route::has('register'),
         'authUser' => auth()->user() ?? false,
+        'themes' => Theme::where('parent_id', null)->latest()->get()
     ]);
 })->name('main.index');
+
+Route::post('/themes', [ThemeController::class, 'store'])->name('theme.store');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -34,5 +38,7 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
+
+
 
 require __DIR__.'/auth.php';
