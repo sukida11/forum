@@ -2,7 +2,8 @@
 import {Link, usePage} from "@inertiajs/vue3";
 
 defineProps({
-    links: {type: Array}
+    links: {type: Array},
+    title: {type: String}
 })
 
 </script>
@@ -24,6 +25,7 @@ defineProps({
             </svg>
             <Link :href="link.href">{{ link.text }}</Link>
             </li>
+
         </template>
     </ul>
 </template>

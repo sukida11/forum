@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\SubThemeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ThemeController;
 use Illuminate\Foundation\Application;
@@ -27,8 +28,28 @@ Route::get('/', function () {
     ]);
 })->name('main.index');
 
-Route::post('/themes', [ThemeController::class, 'store'])->middleware(['auth', 'verified', 'admin'])->name('theme.store');
-Route::get('/themes/{theme}', [ThemeController::class, 'show'])->name('theme.show');
+// Default user routes for themes
+Route::group([], function () {
+    Route::get('/themes/{theme}', [ThemeController::class, 'show'])->name('theme.show');
+
+    Route::group(['prefix' => '/sub-theme'], function () {
+//        Route::
+    });
+
+});
+
+// Admin routes for themes
+Route::middleware(['auth', 'verified', 'admin'])->group(function () {
+    Route::post('/themes', [ThemeController::class, 'store'])->name('theme.store');
+    Route::get('/themes/{theme}/edit', [ThemeController::class, 'edit'])->name('theme.edit');
+    Route::patch('/themes/{theme}', [ThemeController::class, 'update'])->name('theme.update');
+    Route::delete('/themes/{theme}', [ThemeController::class, 'destroy'])->name('theme.destroy');
+
+    Route::group(['prefix' => '/sub-theme'], function () {
+        Route::post('/', [SubThemeController::class, 'store'])->name('subTheme.store');
+    });
+
+});
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');

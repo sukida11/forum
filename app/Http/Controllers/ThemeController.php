@@ -3,10 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Theme\StoreRequest;
+use App\Http\Requests\Theme\UpdateRequest;
 use App\Models\Theme;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+use Mockery\Exception;
 
 class ThemeController extends Controller
 {
@@ -25,9 +29,62 @@ class ThemeController extends Controller
         return back();
     }
 
-    public function show(Theme $theme)
+    public function show(Theme $theme): \Inertia\Response
     {
-        return Inertia::render('SubThemePage', ['theme' => $theme]);
+
+        $parentThemes = [];
+        $themeId = $theme->id;
+        while ($themeId)
+        {
+            $resTheme = Theme::find($themeId);
+
+            if($resTheme->parent_id) {
+                $parentTheme = Theme::find($resTheme->parent_id);
+                $parentThemes[] = $parentTheme;
+                $themeId = $parentTheme->id;
+            } else {
+                break;
+            }
+
+        }
+
+        return Inertia::render('SubThemePage', [
+            'themes' => Theme::where('parent_id', $theme->id)->latest()->get(),
+            'parent_theme' => $theme,
+            'parent_themes' => array_reverse($parentThemes)
+        ]);
+    }
+
+    public function edit(Theme $theme): \Inertia\Response
+    {
+        return Inertia::render('Theme/Edit', [
+            'theme' => $theme
+        ]);
+    }
+
+    public function update(UpdateRequest $request, Theme $theme): \Illuminate\Http\RedirectResponse
+    {
+        $theme->update($request->validated());
+
+        return Redirect::route('main.index');
+    }
+
+    public function destroy(Theme $theme)
+    {
+        try {
+            DB::beginTransaction();
+            Theme::where('parent_id', $theme->id)->get()->each(function ($subTheme) {
+                $subTheme->delete();
+            });
+            $theme->delete();
+            DB::commit();
+        } catch (\Exception $e)
+        {
+            DB::rollBack();
+        }
+
+        return \redirect()->back();
+
     }
 
 }
