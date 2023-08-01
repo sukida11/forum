@@ -1,13 +1,8 @@
 <script setup>
-import {Link, router, usePage} from "@inertiajs/vue3";
+import {usePage} from "@inertiajs/vue3";
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
 import BreadCrumbs from "@/Components/BreadCrumbs.vue";
 import {Head} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import Modal from "@/Components/Modal.vue";
-import TextInput from "@/Components/TextInput.vue";
 import ThemeComponent from "@/Components/ThemeComponent.vue";
 import ThreadComponent from "@/Components/ThreadComponent.vue";
 
@@ -47,7 +42,7 @@ breadCrumbLinks.push({ text: usePage().props.parent_theme.title, href: route('th
        >
        </ThemeComponent>
 
-        <div class="my-10 text-emerald-600 border-2 border-emerald-700"></div>
+        <div class="my-10 text-emerald-600 border-2 border-indigo-700"></div>
 
         <ThreadComponent :theme="parent_theme" v-bind:threads="usePage().props.threads"></ThreadComponent>
 

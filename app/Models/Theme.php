@@ -14,6 +14,28 @@ class Theme extends Model
     protected $table = 'themes';
 
 
+    public function getParentThemes()
+    {
+        $parentThemes = [];
+        $themeId = $this->id;
+        while ($themeId)
+        {
+            $resTheme = Theme::find($themeId);
+
+            if($resTheme->parent_id) {
+                $parentTheme = Theme::find($resTheme->parent_id);
+                $parentThemes[] = $parentTheme;
+                $themeId = $parentTheme->id;
+            } else {
+                break;
+            }
+
+        }
+
+        return array_reverse($parentThemes);
+
+    }
+
     public function getChildrenThemes($id)
     {
         $result = collect([]);

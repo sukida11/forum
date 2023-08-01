@@ -33,26 +33,10 @@ class ThemeController extends Controller
     public function show(Theme $theme): \Inertia\Response
     {
 
-        $parentThemes = [];
-        $themeId = $theme->id;
-        while ($themeId)
-        {
-            $resTheme = Theme::find($themeId);
-
-            if($resTheme->parent_id) {
-                $parentTheme = Theme::find($resTheme->parent_id);
-                $parentThemes[] = $parentTheme;
-                $themeId = $parentTheme->id;
-            } else {
-                break;
-            }
-
-        }
-
         return Inertia::render('SubThemePage', [
             'themes' => Theme::where('parent_id', $theme->id)->latest()->get(), // thems into showed theme
             'parent_theme' => $theme, // showed them
-            'parent_themes' => array_reverse($parentThemes),// theme who stay upper than showed theme
+            'parent_themes' => $theme->getParentThemes(),// theme who stay upper than showed theme
             'threads' => $theme->threads()->latest()->get()
         ]);
     }

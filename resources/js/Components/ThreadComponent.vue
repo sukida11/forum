@@ -10,6 +10,7 @@ import {reactive, ref} from "vue";
 import {Quill, QuillEditor} from '@vueup/vue-quill'
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import {VueEditor} from "vue3-editor";
+import DisabledPrimaryButton from "@/Components/DisabledPrimaryButton.vue";
 
 defineProps({
     theme: {type: Object},
@@ -66,9 +67,15 @@ function deleteThread(thread_id, thread_title)
                 <div class="p-6 text-gray-900 border-b-4" >
                     <h1 class="m-3 font-bold text-2xl">Трэды</h1>
 
-                    <PrimaryButton @click="confirmCreateThread">
+
+                    <DisabledPrimaryButton v-if="$page.props.auth.user === null">
+                        Создать трэд
+                    </DisabledPrimaryButton>
+
+                    <PrimaryButton @click="confirmCreateThread" v-else>
                         Создать трэд
                     </PrimaryButton>
+
                 </div>
                 <template v-if="threads" v-for="thread in threads">
                     <div class="p-6 text-gray-900 border-b-2">
@@ -82,7 +89,14 @@ function deleteThread(thread_id, thread_title)
     </div>
 
     <Modal  :show="confirmingCreateThread" @close="closeModal">
-        <div class="p-6">
+
+        <div class="p-6" v-if="$page.props.auth.user === null">
+            <h2 class="text-lg font-medium text-gray-900">
+                Для начала вам нужно авторизоваться!
+            </h2>
+        </div>
+
+        <div class="p-6" v-else>
             <h2 class="text-lg font-medium text-gray-900">
                 Создание трэда
             </h2>
