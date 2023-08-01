@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\Theme\StoreRequest;
 use App\Http\Requests\Theme\UpdateRequest;
 use App\Models\Theme;
+use App\Models\Thread;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Redirect;
@@ -49,9 +50,10 @@ class ThemeController extends Controller
         }
 
         return Inertia::render('SubThemePage', [
-            'themes' => Theme::where('parent_id', $theme->id)->latest()->get(),
-            'parent_theme' => $theme,
-            'parent_themes' => array_reverse($parentThemes)
+            'themes' => Theme::where('parent_id', $theme->id)->latest()->get(), // thems into showed theme
+            'parent_theme' => $theme, // showed them
+            'parent_themes' => array_reverse($parentThemes),// theme who stay upper than showed theme
+            'threads' => $theme->threads()->latest()->get()
         ]);
     }
 
@@ -69,14 +71,20 @@ class ThemeController extends Controller
         return Redirect::route('main.index');
     }
 
-    public function destroy(Theme $theme)
+    public function destroy(Theme $theme): \Illuminate\Http\RedirectResponse
     {
         try {
             DB::beginTransaction();
-            Theme::where('parent_id', $theme->id)->get()->each(function ($subTheme) {
-                $subTheme->delete();
+
+            $children = $theme->getChildrenThemes($theme->id)->each(function ($item) {
+                $item->delete();
             });
+
+
             $theme->delete();
+
+
+
             DB::commit();
         } catch (\Exception $e)
         {

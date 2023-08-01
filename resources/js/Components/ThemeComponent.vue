@@ -8,6 +8,7 @@ import Modal from "@/Components/Modal.vue";
 import TextInput from "@/Components/TextInput.vue";
 import {ref} from "vue";
 
+
 defineProps({
     themes: {type: Array},
     parent_theme: {type: [Boolean, Object]}
@@ -44,6 +45,7 @@ function deleteTheme(theme_id, theme_title)
     if(!confirm(`Вы уверены что хотите удалить данную тему - ${theme_title}?`)) return 1;
     router.delete(route('theme.destroy', {theme: theme_id}))
 }
+
 
 </script>
 

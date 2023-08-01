@@ -3,6 +3,7 @@
 use App\Http\Controllers\SubThemeController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ThemeController;
+use App\Http\Controllers\ThreadController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -32,11 +33,13 @@ Route::get('/', function () {
 Route::group([], function () {
     Route::get('/themes/{theme}', [ThemeController::class, 'show'])->name('theme.show');
 
-    Route::group(['prefix' => '/sub-theme'], function () {
-//        Route::
-    });
-
 });
+
+Route::post('/create-thread', [ThreadController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('thread.store');
+Route::get('/thread/{thread}', [ThreadController::class, 'show'])
+    ->name('thread.show');
 
 // Admin routes for themes
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
