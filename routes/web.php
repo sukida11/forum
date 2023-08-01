@@ -40,7 +40,15 @@ Route::post('/create-thread', [ThreadController::class, 'store'])
     ->name('thread.store');
 Route::get('/thread/{thread}', [ThreadController::class, 'show'])
     ->name('thread.show');
-
+Route::get('/thread/{thread}/edit', [ThreadController::class, 'edit'])
+    ->middleware(['auth', 'verified'])
+    ->name('thread.edit');
+Route::patch('/thread/{thread}', [ThreadController::class, 'update'])
+    ->middleware(['auth', 'verified'])
+    ->name('thread.update');
+Route::delete('/thread/{thread}/delete', [ThreadController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('thread.destroy');
 // Admin routes for themes
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/themes', [ThemeController::class, 'store'])->name('theme.store');

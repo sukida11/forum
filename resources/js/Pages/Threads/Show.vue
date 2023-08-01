@@ -1,13 +1,23 @@
 <script setup>
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Link} from "@inertiajs/vue3";
+import {Link, usePage} from "@inertiajs/vue3";
 import PrimaryButton from "@/Components/PrimaryButton.vue";
+import { router } from "@inertiajs/vue3";
 
 defineProps({
     thread: {type: Object},
     theme: {type: Object}
 })
+
+const user = usePage().props.auth.user
+const thread = usePage().props.thread
+
+function deleteThread()
+{
+    if(!confirm("Вы точно хотите удалить этот вопрос?")) return 1;
+    router.delete(route('thread.destroy', {thread: usePage().props.thread.id}))
+}
 
 </script>
 
@@ -31,12 +41,19 @@ defineProps({
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900 border-b-4">
+                    <div class="p-6 text-gray-900 border-b-2 border-indigo-400">
                         <h1 class="font-bold text-center text-2xl">{{ $page.props.thread.title}}</h1>
 
-                        <p v-html="$page.props.thread.content">
+                        <p v-html="$page.props.thread.content" style="word-wrap: break-word;">
                         </p>
 
+
+
+                    </div>
+
+                    <div class="p-6 border-l-2 border-r-2 border-b-2 border-indigo-400 flex" v-if="user !== null && (user.id === thread.user_id || user.role_id === 'admin')">
+                        <Link :href="route('thread.edit', {thread: thread.id})" class="hover:bg-indigo-600 bg-indigo-500 p-4 rounded-xl mr-10">Редактировать</Link>
+                        <Link href="#" @click.prevent="deleteThread" class="bg-red-500 hover:bg-red-600 p-4 rounded-xl">Удалить</Link>
                     </div>
 
                     <div class="p-6 ">
