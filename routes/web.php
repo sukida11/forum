@@ -8,6 +8,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 use App\Models\Theme;
+use App\Http\Controllers\AnswerController;
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -49,6 +50,13 @@ Route::patch('/thread/{thread}', [ThreadController::class, 'update'])
 Route::delete('/thread/{thread}/delete', [ThreadController::class, 'destroy'])
     ->middleware(['auth', 'verified'])
     ->name('thread.destroy');
+
+
+Route::post('/answers', [AnswerController::class, 'store'])
+    ->middleware(['auth', 'verified'])
+    ->name('answer.store');
+
+
 // Admin routes for themes
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
     Route::post('/themes', [ThemeController::class, 'store'])->name('theme.store');

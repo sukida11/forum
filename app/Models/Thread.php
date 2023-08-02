@@ -12,8 +12,13 @@ class Thread extends Model
     protected $table = 'threads';
     protected $guarded = false;
 
-    public function theme()
+    public function theme(): \Illuminate\Database\Eloquent\Relations\BelongsTo
     {
         return $this->belongsTo(Theme::class, 'theme_id', 'id');
+    }
+
+    public function answers()
+    {
+        return $this->hasMany(Answer::class, 'thread_id', 'id');
     }
 }

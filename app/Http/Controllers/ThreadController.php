@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Thread\UpdateRequest;
+use App\Models\Answer;
 use App\Models\Thread;
 use Illuminate\Http\Request;
 use App\Http\Requests\Thread\StoreRequest;
@@ -27,7 +28,8 @@ class ThreadController extends Controller
 
         return Inertia::render('Threads/Show', [
             'thread' => $thread,
-            'theme' => $thread->theme
+            'theme' => $thread->theme,
+            'answers' => $thread->answers
         ]);
 
     }
