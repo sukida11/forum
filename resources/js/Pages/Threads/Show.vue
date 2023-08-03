@@ -48,6 +48,7 @@ const answerForm = useForm({
 function addAnswer()
 {
     answerForm.post(route('answer.store'), {
+        preserveScroll: true,
         onSuccess: () => answerForm.reset()
     })
 }
@@ -66,6 +67,17 @@ function editAnswer(answer_id)
         }
     })
 }
+
+function deleteAnswer(answer_id)
+{
+    if(confirm("Вы точно хотите удалить этот ответ?")) {
+        router.delete(route('answer.destroy', {answer: answer_id}), {
+            preserveScroll: true
+        })
+    }
+}
+
+const answerActionCondition = (user !== null && (user.role_id === 'admin' || thread.user_id === user.id || answer.user.id === user.id));
 
 </script>
 
@@ -139,9 +151,18 @@ function editAnswer(answer_id)
                             <hr>
                             <p
                                 class="cursor-pointer"
-                                v-if="user !== null && user.role_id === 'admin' || thread.user_id === user.id || answer.user.id === user.id"
+                                v-if="answerActionCondition"
                                 @click.prevent="confirmEditAnswer(answer.id)"
-                            >Редактировать</p>
+                            >
+                                Редактировать
+                            </p>
+                            <p
+                                class="cursor-pointer"
+                                v-if="answerActionCondition"
+                                @click.prevent="deleteAnswer(answer.id)"
+                            >
+                                Удалить
+                            </p>
 
                             <Modal :show="confirmingEditAnswer" @close="closeModal">
                                 <div class="p-6">

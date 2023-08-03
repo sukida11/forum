@@ -26,7 +26,7 @@ class Answer extends Model
     {
         $user = auth()->user();
 
-        return !(
+        return (
             $user->role_id === 'admin'
             ||
             $user->id === $this->user->id

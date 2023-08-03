@@ -58,6 +58,9 @@ Route::post('/answers', [AnswerController::class, 'store'])
 Route::patch('/answers/{answer}', [AnswerController::class, 'update'])
     ->middleware(['auth', 'verified'])
     ->name('answer.update');
+Route::delete('/answers/{answer}', [AnswerController::class, 'destroy'])
+    ->middleware(['auth', 'verified'])
+    ->name('answer.destroy');
 
 // Admin routes for themes
 Route::middleware(['auth', 'verified', 'admin'])->group(function () {
