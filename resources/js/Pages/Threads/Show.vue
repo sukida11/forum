@@ -1,14 +1,9 @@
 <script setup>
 
 import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import {Link, useForm, usePage} from "@inertiajs/vue3";
-import PrimaryButton from "@/Components/PrimaryButton.vue";
+import {Link, usePage} from "@inertiajs/vue3";
 import {router} from "@inertiajs/vue3";
-import InputError from "@/Components/InputError.vue";
-import Modal from "@/Components/Modal.vue";
-import InputLabel from "@/Components/InputLabel.vue";
-import TextInput from "@/Components/TextInput.vue";
-import {ref} from "vue";
+import AnswersComponent from "@/Components/AnswersComponent.vue";
 
 defineProps({
     thread: {type: Object},
@@ -16,68 +11,14 @@ defineProps({
     answers: {type: [Array, Object]}
 })
 
-
-const confirmingEditAnswer = ref(false)
 const user = usePage().props.auth.user
 const thread = usePage().props.thread
-
-let editAnswerId = null;
-
-const confirmEditAnswer = (answer_id) => {
-    editAnswerId = answer_id;
-    editAnswerForm.content = usePage().props.answers[answer_id-1].content;
-    confirmingEditAnswer.value = true;
-}
-
-const closeModal = () => {
-    confirmingEditAnswer.value = false;
-}
 
 function deleteThread() {
     if (!confirm("Вы точно хотите удалить этот вопрос?")) return 1;
     router.delete(route('thread.destroy', {thread: usePage().props.thread.id}))
 }
 
-
-const answerForm = useForm({
-    content: '',
-    thread_id: usePage().props.thread.id,
-    user_id: usePage().props.auth.user !== null ? usePage().props.auth.user.id : null
-})
-
-function addAnswer()
-{
-    answerForm.post(route('answer.store'), {
-        preserveScroll: true,
-        onSuccess: () => answerForm.reset()
-    })
-}
-
-
-const editAnswerForm = useForm({
-    content: '',
-})
-
-function editAnswer(answer_id)
-{
-    editAnswerForm.patch(route('answer.update', {answer: editAnswerId}), {
-        onSuccess: () => {
-            confirmingEditAnswer.value = false;
-            editAnswerForm.reset();
-        }
-    })
-}
-
-function deleteAnswer(answer_id)
-{
-    if(confirm("Вы точно хотите удалить этот ответ?")) {
-        router.delete(route('answer.destroy', {answer: answer_id}), {
-            preserveScroll: true
-        })
-    }
-}
-
-const answerActionCondition = (user !== null && (user.role_id === 'admin' || thread.user_id === user.id || answer.user.id === user.id));
 
 </script>
 
@@ -100,6 +41,8 @@ const answerActionCondition = (user !== null && (user.role_id === 'admin' || thr
             </div>
         </template>
 
+
+
         <div class="py-12">
             <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -109,8 +52,6 @@ const answerActionCondition = (user !== null && (user.role_id === 'admin' || thr
 
                         <p v-html="$page.props.thread.content" style="word-wrap: break-word;">
                         </p>
-
-
                     </div>
 
                     <div class="p-6 border-l-2 border-r-2 border-b-2 border-indigo-400 flex"
@@ -123,87 +64,7 @@ const answerActionCondition = (user !== null && (user.role_id === 'admin' || thr
                         </Link>
                     </div>
 
-                    <div class="p-6 " v-if="$page.props.auth.user !== null">
-                        <textarea
-                            class="rounded-lg w-full h-60"
-                            placeholder="Ответ"
-                            name="content"
-                            v-model="answerForm.content"
-                            @keyup.enter="addAnswer"
-                        >
-                        </textarea>
-                        <InputError :message="answerForm.errors.content"></InputError>
-                        <PrimaryButton @click.prevent="addAnswer">Отправить</PrimaryButton>
-                    </div>
-
-                    <div class="p-6 border-t-2 border-indigo-600" v-if="$page.props.answers">
-
-                        <div v-for="answer in $page.props.answers" class="mb-4 border-b-2 border-indigo-500">
-                            <p class="text-sm text-right">
-                                {{answer.user.nickname}}
-                            </p>
-                            <p>
-                                {{ answer.content }}
-                            </p>
-                            <p class="text-sm text-right">
-                                {{ answer.created_at }}
-                            </p>
-                            <hr>
-                            <p
-                                class="cursor-pointer"
-                                v-if="answerActionCondition"
-                                @click.prevent="confirmEditAnswer(answer.id)"
-                            >
-                                Редактировать
-                            </p>
-                            <p
-                                class="cursor-pointer"
-                                v-if="answerActionCondition"
-                                @click.prevent="deleteAnswer(answer.id)"
-                            >
-                                Удалить
-                            </p>
-
-                            <Modal :show="confirmingEditAnswer" @close="closeModal">
-                                <div class="p-6">
-                                    <h2 class="text-lg font-medium text-gray-900">
-                                        Редактирование ответа
-                                    </h2>
-
-                                    <p class="mt-1 text-sm text-gray-600">
-                                        Вы можете отредактировать ваш ответ здесь!
-                                    </p>
-
-
-                                    <div class="mt-6">
-                                        <InputLabel for="password" value="Password" class="sr-only" />
-
-                                        <textarea
-                                            class="mt-1 block w-3/4 rounded-lg h-60"
-                                            placeholder="Ответ"
-                                            name="content"
-                                            id="title"
-                                            ref="titleInput"
-                                            type="text"
-                                            v-model="editAnswerForm.content"
-                                            @keyup.enter="editAnswer"
-                                        />
-
-                                        <InputError :message="editAnswerForm.errors.content"  class="mt-2" />
-                                    </div>
-
-                                    <div class="mt-6">
-                                        <PrimaryButton @click.prevent="editAnswer" >
-                                            Сохранить
-                                        </PrimaryButton>
-                                    </div>
-
-                                </div>
-                            </Modal>
-
-                        </div>
-
-                    </div>
+                    <AnswersComponent v-bind:answers="$page.props.answers"></AnswersComponent>
 
                 </div>
             </div>
