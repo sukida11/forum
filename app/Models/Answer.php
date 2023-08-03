@@ -37,7 +37,7 @@ class Answer extends Model
 
     }
 
-    public function childAnswers()
+    public function childAnswers(): array
     {
         return AnswerMainResource::collection($this->where('answer_to', $this->id)->get())->resolve();
     }
