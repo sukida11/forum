@@ -23,8 +23,9 @@ class StoreRequest extends FormRequest
     {
         return [
             'content' => ['required', 'string', 'max:512'],
-            'user_id' => ['required', 'integer'],
-            'thread_id' => ['required', 'integer']
+            'user_id' => ['required', 'int'],
+            'thread_id' => ['required', 'int'],
+            'answer_to' => ['int', 'nullable']
         ];
     }
 }

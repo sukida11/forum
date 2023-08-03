@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Http\Resources\Answer\AnswerMainResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -34,6 +35,11 @@ class Answer extends Model
             $user->id === $this->thread->user->id
         );
 
+    }
+
+    public function childAnswers()
+    {
+        return AnswerMainResource::collection($this->where('answer_to', $this->id)->get())->resolve();
     }
 
 }
