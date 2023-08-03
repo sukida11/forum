@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\Thread\UpdateRequest;
+use App\Http\Resources\Answer\AnswerMainResource;
+use App\Http\Resources\Thread\ThreadMainResource;
 use App\Models\Answer;
 use App\Models\Thread;
 use Illuminate\Http\Request;
@@ -27,9 +29,9 @@ class ThreadController extends Controller
     {
 
         return Inertia::render('Threads/Show', [
-            'thread' => $thread,
+            'thread' => (new ThreadMainResource($thread))->resolve(),
             'theme' => $thread->theme,
-            'answers' => $thread->answers
+            'answers' => AnswerMainResource::collection($thread->answers)->resolve()
         ]);
 
     }

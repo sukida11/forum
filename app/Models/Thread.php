@@ -17,8 +17,14 @@ class Thread extends Model
         return $this->belongsTo(Theme::class, 'theme_id', 'id');
     }
 
-    public function answers()
+    public function answers(): \Illuminate\Database\Eloquent\Relations\HasMany
     {
         return $this->hasMany(Answer::class, 'thread_id', 'id');
     }
+
+    public function user()
+    {
+        return $this->belongsTo(User::class, 'user_id', 'id');
+    }
+
 }
